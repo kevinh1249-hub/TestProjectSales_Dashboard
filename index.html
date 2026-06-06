@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mycelium — Pulse Check</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:           #FAF7F2;
+            --surface:      #F0EDE6;
+            --card:         #FFFFFF;
+            --accent:       #1A3D2A;
+            --accent-mid:   #2D6B48;
+            --accent-light: #E6F4ED;
+            --text:         #2C2419;
+            --text-sec:     #8B7355;
+            --border:       #C9B99E;
+            --success:      #1A6B3C;
+            --success-bg:   #E6F4ED;
+            --warning:      #92600A;
+            --warning-bg:   #FBF0DC;
+            --danger:       #8B2020;
+            --danger-bg:    #FBEBEB;
+            --radius:       10px;
+            --radius-sm:    6px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* ── HEADER ─────────────────────────────── */
+        header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo { display: flex; align-items: center; gap: 11px; }
+
+        .logo-icon {
+            width: 34px; height: 34px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .logo-text { display: flex; flex-direction: column; line-height: 1.15; }
+        .logo-name  { font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: -0.3px; }
+        .logo-sub   { font-size: 10px; color: var(--text-sec); font-weight: 500; letter-spacing: 0.6px; text-transform: uppercase; }
+
+        .header-right { display: flex; align-items: center; gap: 14px; }
+
+        .rep-selector { display: none; align-items: center; gap: 8px; }
+        .rep-selector.visible { display: flex; }
+        .rep-selector label { font-size: 12px; color: var(--text-sec); font-weight: 500; }
+        .rep-selector select {
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            padding: 5px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .toggle-btn {
+            padding: 6px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-sec);
+            font-size: 13px;
+            font-family: inherit;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .toggle-btn.active {
+            background: var(--card);
+            color: var(--text);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        /* ── LAYOUT ─────────────────────────────── */
+        main { max-width: 1200px; margin: 0 auto; padding: 32px; }
+
+        .view { display: none; }
+        .view.active { display: block; }
+
+        .page-header { margin-bottom: 24px; }
+        .page-title  { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+        .page-sub    { font-size: 13px; color: var(--text-sec); margin-top: 2px; }
+
+        /* ── KPI CARDS ──────────────────────────── */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .kpi-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-sec);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -1px;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .kpi-value .unit { font-size: 15px; font-weight: 400; color: var(--text-sec); }
+
+        .kpi-sub { font-size: 12px; color: var(--text-sec); }
+        .kpi-sub strong { color: var(--text); font-weight: 600; }
+
+        .progress-track {
+            height: 4px;
+            background: var(--surface);
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: var(--accent);
+            transition: width 0.5s ease;
+        }
+        .progress-fill.warn    { background: var(--warning); }
+        .progress-fill.danger  { background: var(--danger); }
+        .progress-fill.success { background: var(--success); }
+
+        /* ── TWO-COL ────────────────────────────── */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1.45fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 20px;
+            letter-spacing: -0.2px;
+        }
+
+        .card-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-hint { font-size: 11px; color: var(--text-sec); }
+
+        /* ── CHART ──────────────────────────────── */
+        .chart-wrap { position: relative; height: 210px; }
+
+        /* ── ACTIVITY TABLE ─────────────────────── */
+        .act-header {
+            display: grid;
+            grid-template-columns: 130px 1fr 1fr 1fr;
+            gap: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2px;
+        }
+
+        .act-header span {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-sec);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+        .act-header span:first-child { text-align: left; }
+
+        .act-row {
+            display: grid;
+            grid-template-columns: 130px 1fr 1fr 1fr;
+            gap: 8px;
+            align-items: center;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--surface);
+        }
+        .act-row:last-child { border-bottom: none; }
+
+        .act-rep-name { font-size: 13px; font-weight: 500; color: var(--text); }
+        .act-stat { text-align: center; }
+        .act-stat-val { font-size: 15px; font-weight: 600; color: var(--text); }
+
+        .totals-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .total-tile {
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            text-align: center;
+        }
+        .total-val   { font-size: 18px; font-weight: 700; color: var(--text); }
+        .total-label { font-size: 10px; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 1px; }
+
+        /* ── LEADERBOARD ────────────────────────── */
+        .lb-header {
+            display: grid;
+            grid-template-columns: 28px 1fr 96px 88px 76px 76px 76px;
+            gap: 12px;
+            padding: 0 14px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .lb-header span {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-sec);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .lb-header span:not(:first-child):not(:nth-child(2)) { text-align: right; }
+
+        .rep-row {
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            margin-top: 4px;
+            transition: border-color 0.15s;
+        }
+        .rep-row:hover { border-color: var(--border); }
+
+        .rep-row-main {
+            display: grid;
+            grid-template-columns: 28px 1fr 96px 88px 76px 76px 76px;
+            gap: 12px;
+            padding: 11px 14px;
+            cursor: pointer;
+            align-items: center;
+            transition: background 0.12s;
+        }
+        .rep-row-main:hover { background: var(--surface); }
+        .rep-row.expanded .rep-row-main { background: var(--surface); }
+
+        .rank     { font-size: 13px; font-weight: 700; color: var(--text-sec); }
+        .rank-top { color: var(--accent); }
+
+        .rep-name-cell { display: flex; align-items: center; gap: 10px; }
+
+        .avatar {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+        .av-sarah  { background: #1A3D2A; }
+        .av-marcus { background: #2D6B48; }
+        .av-jordan { background: #8B7355; }
+        .av-tyler  { background: #92600A; }
+
+        .rep-name { font-size: 13px; font-weight: 600; color: var(--text); }
+
+        .badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            display: inline-block;
+            margin-top: 2px;
+        }
+        .badge-top        { background: var(--success-bg); color: var(--success); }
+        .badge-improving  { background: var(--accent-light); color: var(--accent); }
+        .badge-declining  { background: var(--warning-bg); color: var(--warning); }
+        .badge-struggling { background: var(--danger-bg); color: var(--danger); }
+
+        .cell-r  { text-align: right; }
+        .cv      { font-size: 13px; font-weight: 600; color: var(--text); }
+        .cv-sub  { font-size: 10px; color: var(--text-sec); }
+
+        .pct-high { color: var(--success); }
+        .pct-mid  { color: var(--warning); }
+        .pct-low  { color: var(--danger); }
+
+        .expand-icon { font-size: 9px; color: var(--text-sec); transition: transform 0.2s; }
+        .rep-row.expanded .expand-icon { transform: rotate(180deg); }
+
+        /* ── EXPAND PANEL ───────────────────────── */
+        .rep-expand {
+            display: none;
+            padding: 20px 14px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+        }
+        .rep-row.expanded .rep-expand { display: block; }
+
+        .expand-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 24px;
+        }
+
+        .expand-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-sec);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 12px;
+        }
+
+        .mini-table { width: 100%; border-collapse: collapse; }
+        .mini-table th {
+            text-align: left;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-sec);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 0 0 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .mini-table td {
+            padding: 8px 0;
+            font-size: 12px;
+            color: var(--text);
+            border-bottom: 1px solid var(--surface);
+        }
+        .mini-table tr:last-child td { border-bottom: none; }
+
+        .deal-co  { font-weight: 600; }
+        .deal-arr { font-weight: 600; color: var(--accent); }
+
+        .stage-pill {
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 3px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .sp-negotiation { background: var(--success-bg); color: var(--success); }
+        .sp-proposal    { background: var(--accent-light); color: var(--accent); }
+        .sp-demo        { background: #EEF2FF; color: #3730A3; }
+        .sp-discovery   { background: var(--warning-bg); color: var(--warning); }
+        .sp-prospecting { background: var(--surface); color: var(--text-sec); border: 1px solid var(--border); }
+
+        .feedback-list { display: flex; flex-direction: column; gap: 12px; }
+        .feedback-item { display: flex; gap: 10px; align-items: flex-start; }
+        .feedback-dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: 5px; flex-shrink: 0; }
+        .feedback-text { font-size: 12px; color: var(--text); line-height: 1.65; }
+
+        /* ── REP VIEW ───────────────────────────── */
+        .rep-hero {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .rep-hero-left { display: flex; align-items: center; gap: 14px; }
+
+        .hero-avatar {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .hero-name  { font-size: 19px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
+        .hero-meta  { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+        .hero-role  { font-size: 12px; color: var(--text-sec); }
+
+        .quota-block { text-align: right; }
+        .quota-lbl   { font-size: 10px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 5px; }
+        .quota-nums  { font-size: 13px; color: var(--text); margin-bottom: 6px; }
+        .quota-big   { font-size: 20px; font-weight: 700; }
+        .quota-hint  { font-size: 11px; color: var(--text-sec); margin-top: 4px; }
+        .quota-bar   { width: 200px; margin-left: auto; }
+
+        /* ── ACTIVITY STAT CARDS ────────────────── */
+        .act-cards {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .act-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            text-align: center;
+        }
+
+        .act-icon  { font-size: 20px; margin-bottom: 6px; }
+        .act-val   { font-size: 24px; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 4px; }
+        .act-lbl   { font-size: 10px; color: var(--text-sec); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+
+        .deals-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px 24px;
+        }
+
+        .deals-table { width: 100%; border-collapse: collapse; }
+        .deals-table th {
+            text-align: left;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-sec);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 0 0 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .deals-table td {
+            padding: 11px 0;
+            font-size: 13px;
+            color: var(--text);
+            border-bottom: 1px solid var(--surface);
+        }
+        .deals-table tr:last-child td { border-bottom: none; }
+
+        /* ── RESPONSIVE ─────────────────────────── */
+        @media (max-width: 960px) {
+            main { padding: 20px 16px; }
+            .kpi-row  { grid-template-columns: repeat(2, 1fr); }
+            .two-col  { grid-template-columns: 1fr; }
+            .act-cards { grid-template-columns: repeat(3, 1fr); }
+            .lb-header, .rep-row-main {
+                grid-template-columns: 28px 1fr 80px 70px 60px;
+            }
+            .lb-header span:nth-child(6),
+            .lb-header span:nth-child(7),
+            .rep-row-main > *:nth-child(6),
+            .rep-row-main > *:nth-child(7) { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════ -->
+<header>
+    <div class="logo">
+        <div class="logo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="5"  r="2.5" fill="white"/>
+                <circle cx="5"  cy="18" r="2.5" fill="white"/>
+                <circle cx="19" cy="18" r="2.5" fill="white"/>
+                <line x1="12" y1="7.5"  x2="6.2"  y2="16"   stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+                <line x1="12" y1="7.5"  x2="17.8" y2="16"   stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+                <line x1="7.5" y1="18"  x2="16.5" y2="18"   stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <div class="logo-text">
+            <span class="logo-name">Mycelium</span>
+            <span class="logo-sub">Pulse Check</span>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="rep-selector" id="repSelector">
+            <label>Viewing as</label>
+            <select id="repSelect" onchange="updateRepView()">
+                <option value="sarah">Sarah Chen</option>
+                <option value="marcus">Marcus Williams</option>
+                <option value="jordan">Jordan Taylor</option>
+                <option value="tyler">Tyler Brooks</option>
+            </select>
+        </div>
+        <div class="view-toggle">
+            <button class="toggle-btn active" id="managerBtn" onclick="setView('manager')">Manager View</button>
+            <button class="toggle-btn"         id="repBtn"     onclick="setView('rep')">Rep View</button>
+        </div>
+    </div>
+</header>
+
+<main>
+
+<!-- ══════════════════════════════════════════
+     MANAGER VIEW
+═══════════════════════════════════════════ -->
+<div class="view active" id="manager-view">
+
+    <div class="page-header">
+        <div class="page-title">Team Overview</div>
+        <div class="page-sub">Q2 2025 &nbsp;·&nbsp; Mycelium Sales Team &nbsp;·&nbsp; 4 Account Executives</div>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="kpi-row">
+        <div class="kpi-card">
+            <div class="kpi-label">Team ARR Closed (QTD)</div>
+            <div class="kpi-value">$1.46<span class="unit">M</span></div>
+            <div class="kpi-sub">of <strong>$1.80M</strong> team quota</div>
+            <div class="progress-track"><div class="progress-fill warn" style="width:81%"></div></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Avg Sales Cycle</div>
+            <div class="kpi-value">65 <span class="unit">days</span></div>
+            <div class="kpi-sub">Best: <strong>52d</strong> (Sarah) &nbsp;·&nbsp; Worst: <strong>79d</strong> (Tyler)</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Meetings Held (Last Week)</div>
+            <div class="kpi-value">21</div>
+            <div class="kpi-sub">Calls: <strong>82</strong> &nbsp;·&nbsp; Emails sent: <strong>133</strong></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Team Quota Attainment</div>
+            <div class="kpi-value">81<span class="unit">%</span></div>
+            <div class="kpi-sub"><strong>$338K</strong> ARR remaining to quota</div>
+            <div class="progress-track"><div class="progress-fill warn" style="width:81%"></div></div>
+        </div>
+    </div>
+
+    <!-- Pipeline + Activity -->
+    <div class="two-col">
+        <div class="card">
+            <div class="card-title">Pipeline by Stage — Team Total</div>
+            <div class="chart-wrap">
+                <canvas id="managerPipelineChart"></canvas>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">Team Activity This Week</div>
+            <div class="act-header">
+                <span>Rep</span>
+                <span>Calls</span>
+                <span>Emails</span>
+                <span>Meetings</span>
+            </div>
+            <div>
+                <div class="act-row">
+                    <div class="act-rep-name">Sarah Chen</div>
+                    <div class="act-stat"><span class="act-stat-val">28</span></div>
+                    <div class="act-stat"><span class="act-stat-val">47</span></div>
+                    <div class="act-stat"><span class="act-stat-val">8</span></div>
+                </div>
+                <div class="act-row">
+                    <div class="act-rep-name">Marcus Williams</div>
+                    <div class="act-stat"><span class="act-stat-val">24</span></div>
+                    <div class="act-stat"><span class="act-stat-val">38</span></div>
+                    <div class="act-stat"><span class="act-stat-val">6</span></div>
+                </div>
+                <div class="act-row">
+                    <div class="act-rep-name">Jordan Taylor</div>
+                    <div class="act-stat"><span class="act-stat-val">18</span></div>
+                    <div class="act-stat"><span class="act-stat-val">29</span></div>
+                    <div class="act-stat"><span class="act-stat-val">4</span></div>
+                </div>
+                <div class="act-row">
+                    <div class="act-rep-name">Tyler Brooks</div>
+                    <div class="act-stat"><span class="act-stat-val">12</span></div>
+                    <div class="act-stat"><span class="act-stat-val">19</span></div>
+                    <div class="act-stat"><span class="act-stat-val">3</span></div>
+                </div>
+            </div>
+            <div class="totals-row">
+                <div class="total-tile"><div class="total-val">82</div><div class="total-label">Total Calls</div></div>
+                <div class="total-tile"><div class="total-val">133</div><div class="total-label">Total Emails</div></div>
+                <div class="total-tile"><div class="total-val">21</div><div class="total-label">Meetings</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="card" style="margin-bottom:0">
+        <div class="card-title-row">
+            <span class="card-title">Rep Leaderboard — Q2 2025</span>
+            <span class="card-hint">Click any row to see active deals &amp; coaching notes</span>
+        </div>
+
+        <div class="lb-header">
+            <span>#</span>
+            <span>Rep</span>
+            <span style="text-align:right">ARR Closed</span>
+            <span style="text-align:right">Attainment</span>
+            <span style="text-align:right">Pipeline</span>
+            <span style="text-align:right">Close Rate</span>
+            <span style="text-align:right">Avg Deal</span>
+        </div>
+
+        <!-- Sarah -->
+        <div class="rep-row" id="row-sarah" onclick="toggleRow('sarah')">
+            <div class="rep-row-main">
+                <div class="rank rank-top">1</div>
+                <div class="rep-name-cell">
+                    <div class="avatar av-sarah">SC</div>
+                    <div>
+                        <div class="rep-name">Sarah Chen</div>
+                        <span class="badge badge-top">Top Performer</span>
+                    </div>
+                </div>
+                <div class="cell-r"><div class="cv">$531K</div><div class="cv-sub">ARR closed</div></div>
+                <div class="cell-r"><div class="cv pct-high" style="font-size:15px;font-weight:700">118%</div><div class="cv-sub">of $450K</div></div>
+                <div class="cell-r"><div class="cv">$820K</div></div>
+                <div class="cell-r"><div class="cv">34%</div></div>
+                <div class="cell-r" style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
+                    <div class="cv">$42K</div>
+                    <span class="expand-icon">▼</span>
+                </div>
+            </div>
+            <div class="rep-expand">
+                <div class="expand-grid">
+                    <div>
+                        <div class="expand-title">Active Deals</div>
+                        <table class="mini-table">
+                            <thead><tr>
+                                <th>Company</th><th style="text-align:right">ARR</th><th>Stage</th><th style="text-align:right">Days</th>
+                            </tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td class="deal-co">Vertix Corp</td>
+                                    <td style="text-align:right" class="deal-arr">$58K</td>
+                                    <td><span class="stage-pill sp-negotiation">Negotiation</span></td>
+                                    <td style="text-align:right;color:var(--text-sec)">45d</td>
+                                </tr>
+                                <tr>
+                                    <td class="deal-co">BluePeak Solutions</td>
+                                    <td style="text-align:right" class="deal-arr">$42K</td>
+                                    <td><span class="stage-pill sp-proposal">Proposal</span></td>
+                                    <td style="text-align:right;color:var(--text-sec)">32d</td>
+                                </tr>
+                                <tr>
+                                    <td class="deal-co">Arctan Health</td>
+                                    <td style="text-align:right" class="deal-arr">$38K</td>
+                                    <td><span class="stage-pill sp-demo">Demo / Eval</span></td>
+                                    <td style="text-align:right;color:var(--text-sec)">18d</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <div class="expand-title">Coaching Notes</div>
+                        <div class="feedback-list">
+                            <div class="feedback-item">
+                                <div class="feedback-dot"></div>
+                                <div class="feedback-text">Call structure and discovery are consistently strong — maintain this frequency as pipeline continues to fill.</div>
+                            </div>
+                            <div class="feedback-item">
+                                <div class="feedback-dot"></div>
+                                <div class="feedback-text">Watch talk ratio in late-stage calls. Letting prospects lead the negotiation conversation will protect margins.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Marcus -->
+        <div class="rep-row" id="row-marcus" onclick="toggleRow('marcus')">
+            <div class="rep-row-main">
+                <div class="rank">2</div>
+                <div class="rep-name-cell">
+                    <div class="avatar av-marcus">MW</div>
+                    <div>
+                        <div class="rep-name">Marcus Williams</div>
+                        <span class="badge badge-improving">Improving</span>
+                    </div>
+                </div>
+                <div class="cell-r"><div class="cv">$392K</div><div class="cv-sub">ARR closed</div></div>
+                <div class="cell-r"><div class="cv pct-mid" style="font-size:15px;font-weight:700">87%</div><div class="cv-sub">of $450K</div></div>
+                <div class="cell-r"><div class="cv">$640K</div></div>
+                <div class="cell-r"><div class="cv">24%</div></div>
+                <div class="cell-r" style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
+                    <div class="cv">$35K</div>
+                    <span class="expand-icon">▼</span>
+                </div>
+            </div>
+            <div class="rep-expand">
+                <div class="expand-grid">
+                    <div>
+                        <div class="expand-title">Active Deals</div>
+                        <table class="mini-table">
+                            <thead><tr>
+                                <th>Company</th><th style="text-align:right">ARR</th><th>Stage</th><th style="text-align:right">Days</th>
+                            </tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td class="deal-co">Sora Dynamics</td>
+                                    <td style="text-align:right" class="deal-arr">$44K</td>
+                                    <td><span class="stage-pill sp-proposal">Proposal</span></td>
+                                    <td style="text-align:right;color:var(--text-sec)">51d</td>
+                                </tr>
+                                <tr>
+                                    <td class="deal-co">NexPoint Analytics</td>
+                                    <td style="text-align:right" class="deal-arr">$31K</td>
+                                    <td><span class="stage-pill sp-demo">Demo / Eval</span></td>
+                                    <td style="text-align:right;color:var(--text-sec)">28d</td>
+                                </tr>
+                                <tr>
+                                    <td class="deal-co">Lightpath SaaS</td>
+                                    <td style="text-align:right" class="deal-arr">$27K</td>
+                                    <td><span class="stage-pill sp-discovery">Discovery</span></td>
+                                    <td style="text-align:right;color:var(--text-sec)">15d</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <div class="expand-title">Coaching Notes</div>
+                        <div class="feedback-list">
+                            <div class="feedback-item">
+                                <div class="feedback-dot"></div>
+                                <div class="feedback-text">Call volume is trending up — a strong signal. The next focus is converting more discovery calls to scheduled demos.</div>
+                            </div>
+                            <div class="feedback-item">
+                                <div class="feedback-dot"></div>
+                                <div class="feedback-text">Deals are stalling at the proposal stage. Sharpen the ROI story before the proposal goes out to reduce friction at sign-off.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jordan -->
+        <div class="rep-row" id="row-jordan" onclick="toggleRow('jordan')">
+            <div class="rep-row-main">
+                <div class="rank">3</div>
+                <div class="rep-name-cell">
+                    <div class="avatar av-jordan">JT</div>
+                    <div>
+                        <div class="rep-name">Jordan Taylor</div>
+                        <span class="badge badge-declining">Declining</span>
+                    </div>
+                </div>
+                <div class="cell-r"><div class="cv">$324K</div><div class="cv-sub">ARR closed</div></div>
+                <div class="cell-r"><div class="cv pct-mid" style="font-size:15px;font-weight:700">72%</div><div class="cv-sub">of $450K</div></div>
+                <div class="cell-r"><div class="cv">$490K</div></div>
+                <div class="cell-r"><div class="cv">19%</div></div>
+                <div class="cell-r" style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
+                    <div class="cv">$31K</div>
+                    <span class="expand-icon">▼</span>
+                </div>
+            </div>
+            <div class="rep-expand">
+                <div class="expand-grid">
+                    <div>
+                        <div class="expand-title">Active Deals</div>
+                        <table class="mini-table">
+                            <thead><tr>
+                                <th>Company</th><th style="text-align:right">ARR</th><th>Stage</th><th style="text-align:right">Days</th>
+                            </tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td class="deal-co">Redwood Ventures</td>
+                                    <td style="text-align:right" class="deal-arr">$38K</td>
+                                    <td><span class="stage-pill sp-demo">Demo / Eval</span></td>
+                                    <td style="text-align:right;color:var(--text-sec)">55d</td>
+                                </tr>
+                                <tr>
+                                    <td class="deal-co">Comet Systems</td>
+                                    <td style="text-align:right" class="deal-arr">$29K</td>
+                                    <td><span class="stage-pill sp-discovery">Discovery</span></td>
+                                    <td style="text-align:right;color:var(--text-sec)">38d</td>
+                                </tr>
+                                <tr>
+                                    <td class="deal-co">Hollow Stack</td>
+                                    <td style="text-align:right" class="deal-arr">$22K</td>
+                                    <td><span class="stage-pill sp-prospecting">Prospecting</span></td>
+                                    <td style="text-align:right;color:var(--text-sec)">12d</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <div class="expand-title">Coaching Notes</div>
+                        <div class="feedback-list">
+                            <div class="feedback-item">
+                                <div class="feedback-dot"></div>
+                                <div class="feedback-text">Deals are stalling between demo and proposal. Need to establish urgency and a confirmed next step before ending every demo call.</div>
+                            </div>
+                            <div class="feedback-item">
+                                <div class="feedback-dot"></div>
+                                <div class="feedback-text">Discovery questions are staying surface-level — not uncovering the full decision process or internal stakeholders. Needs to dig deeper before the demo.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tyler -->
+        <div class="rep-row" id="row-tyler" onclick="toggleRow('tyler')">
+            <div class="rep-row-main">
+                <div class="rank">4</div>
+                <div class="rep-name-cell">
+                    <div class="avatar av-tyler">TB</div>
+                    <div>
+                        <div class="rep-name">Tyler Brooks</div>
+                        <span class="badge badge-struggling">Needs Attention</span>
+                    </div>
+                </div>
+                <div class="cell-r"><div class="cv">$216K</div><div class="cv-sub">ARR closed</div></div>
+                <div class="cell-r"><div class="cv pct-low" style="font-size:15px;font-weight:700">48%</div><div class="cv-sub">of $450K</div></div>
+                <div class="cell-r"><div class="cv">$310K</div></div>
+                <div class="cell-r"><div class="cv">12%</div></div>
+                <div class="cell-r" style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
+                    <div class="cv">$28K</div>
+                    <span class="expand-icon">▼</span>
+                </div>
+            </div>
+            <div class="rep-expand">
+                <div class="expand-grid">
+                    <div>
+                        <div class="expand-title">Active Deals</div>
+                        <table class="mini-table">
+                            <thead><tr>
+                                <th>Company</th><th style="text-align:right">ARR</th><th>Stage</th><th style="text-align:right">Days</th>
+                            </tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td class="deal-co">Irongate Fintech</td>
+                                    <td style="text-align:right" class="deal-arr">$35K</td>
+                                    <td><span class="stage-pill sp-discovery">Discovery</span></td>
+                                    <td style="text-align:right;color:var(--text-sec)">62d</td>
+                                </tr>
+                                <tr>
+                                    <td class="deal-co">Drift Logic</td>
+                                    <td style="text-align:right" class="deal-arr">$24K</td>
+                                    <td><span class="stage-pill sp-prospecting">Prospecting</span></td>
+                                    <td style="text-align:right;color:var(--text-sec)">41d</td>
+                                </tr>
+                                <tr>
+                                    <td class="deal-co">Sunpath Media</td>
+                                    <td style="text-align:right" class="deal-arr">$18K</td>
+                                    <td><span class="stage-pill sp-prospecting">Prospecting</span></td>
+                                    <td style="text-align:right;color:var(--text-sec)">28d</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <div class="expand-title">Coaching Notes</div>
+                        <div class="feedback-list">
+                            <div class="feedback-item">
+                                <div class="feedback-dot"></div>
+                                <div class="feedback-text">Not establishing next steps at the end of calls — deals are going dark after discovery. Every call needs a scheduled follow-up booked before hanging up.</div>
+                            </div>
+                            <div class="feedback-item">
+                                <div class="feedback-dot"></div>
+                                <div class="feedback-text">Not asking about paper process or internal procurement. Deals are getting stuck at legal and finance without warning. Ask about the buying process in every discovery call.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /leaderboard card -->
+</div><!-- /manager-view -->
+
+
+<!-- ══════════════════════════════════════════
+     REP VIEW
+═══════════════════════════════════════════ -->
+<div class="view" id="rep-view">
+    <div id="repHero"     class="rep-hero"></div>
+    <div id="repKpiRow"   class="kpi-row"></div>
+    <div id="repActCards" class="act-cards"></div>
+    <div class="two-col">
+        <div class="card">
+            <div class="card-title">My Pipeline by Stage</div>
+            <div class="chart-wrap">
+                <canvas id="repPipelineChart"></canvas>
+            </div>
+        </div>
+        <div id="repDealsCard" class="deals-card"></div>
+    </div>
+</div><!-- /rep-view -->
+
+</main>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+const REP_DATA = {
+    sarah: {
+        name: 'Sarah Chen', initials: 'SC', avClass: 'av-sarah',
+        statusLabel: 'Top Performer', badgeClass: 'badge-top',
+        arr: 531000, quota: 450000,
+        closeRate: 34, avgDeal: 42000, pipeline: 820000, salesCycle: 52,
+        calls: 28, emails: 47, meetings: 8, callsPerOpp: 8, emailsPerOpp: 14,
+        pipelineStages: [60000, 120000, 280000, 240000, 120000],
+        deals: [
+            { co: 'Vertix Corp',        arr: 58000, stage: 'Negotiation', cls: 'sp-negotiation', days: 45 },
+            { co: 'BluePeak Solutions',  arr: 42000, stage: 'Proposal',    cls: 'sp-proposal',    days: 32 },
+            { co: 'Arctan Health',       arr: 38000, stage: 'Demo / Eval', cls: 'sp-demo',         days: 18 }
+        ]
+    },
+    marcus: {
+        name: 'Marcus Williams', initials: 'MW', avClass: 'av-marcus',
+        statusLabel: 'Improving', badgeClass: 'badge-improving',
+        arr: 391500, quota: 450000,
+        closeRate: 24, avgDeal: 35000, pipeline: 640000, salesCycle: 61,
+        calls: 24, emails: 38, meetings: 6, callsPerOpp: 11, emailsPerOpp: 18,
+        pipelineStages: [80000, 180000, 220000, 160000, 0],
+        deals: [
+            { co: 'Sora Dynamics',      arr: 44000, stage: 'Proposal',    cls: 'sp-proposal',    days: 51 },
+            { co: 'NexPoint Analytics', arr: 31000, stage: 'Demo / Eval', cls: 'sp-demo',         days: 28 },
+            { co: 'Lightpath SaaS',     arr: 27000, stage: 'Discovery',   cls: 'sp-discovery',   days: 15 }
+        ]
+    },
+    jordan: {
+        name: 'Jordan Taylor', initials: 'JT', avClass: 'av-jordan',
+        statusLabel: 'Declining', badgeClass: 'badge-declining',
+        arr: 324000, quota: 450000,
+        closeRate: 19, avgDeal: 31000, pipeline: 490000, salesCycle: 68,
+        calls: 18, emails: 29, meetings: 4, callsPerOpp: 14, emailsPerOpp: 22,
+        pipelineStages: [110000, 190000, 190000, 0, 0],
+        deals: [
+            { co: 'Redwood Ventures',   arr: 38000, stage: 'Demo / Eval', cls: 'sp-demo',         days: 55 },
+            { co: 'Comet Systems',      arr: 29000, stage: 'Discovery',   cls: 'sp-discovery',   days: 38 },
+            { co: 'Hollow Stack',       arr: 22000, stage: 'Prospecting', cls: 'sp-prospecting', days: 12 }
+        ]
+    },
+    tyler: {
+        name: 'Tyler Brooks', initials: 'TB', avClass: 'av-tyler',
+        statusLabel: 'Needs Attention', badgeClass: 'badge-struggling',
+        arr: 216000, quota: 450000,
+        closeRate: 12, avgDeal: 28000, pipeline: 310000, salesCycle: 79,
+        calls: 12, emails: 19, meetings: 3, callsPerOpp: 19, emailsPerOpp: 31,
+        pipelineStages: [160000, 150000, 0, 0, 0],
+        deals: [
+            { co: 'Irongate Fintech',   arr: 35000, stage: 'Discovery',   cls: 'sp-discovery',   days: 62 },
+            { co: 'Drift Logic',        arr: 24000, stage: 'Prospecting', cls: 'sp-prospecting', days: 41 },
+            { co: 'Sunpath Media',      arr: 18000, stage: 'Prospecting', cls: 'sp-prospecting', days: 28 }
+        ]
+    }
+};
+
+const STAGES       = ['Prospecting', 'Discovery', 'Demo / Eval', 'Proposal', 'Negotiation'];
+const STAGE_COLORS = ['#C9B99E', '#8B7355', '#2D6B48', '#1A3D2A', '#0D2218'];
+
+let managerChart = null;
+let repChart     = null;
+
+function fmt(n) {
+    if (n >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M';
+    if (n >= 1000)    return '$' + Math.round(n / 1000) + 'K';
+    return '$' + n;
+}
+
+function pctClass(p)      { return p >= 100 ? 'pct-high' : p >= 70 ? 'pct-mid' : 'pct-low'; }
+function progressClass(p) { return p >= 100 ? 'success'  : p >= 70 ? 'warn'    : 'danger'; }
+
+function setView(v) {
+    const isMgr = v === 'manager';
+    document.getElementById('manager-view').classList.toggle('active',  isMgr);
+    document.getElementById('rep-view').classList.toggle('active',     !isMgr);
+    document.getElementById('managerBtn').classList.toggle('active',    isMgr);
+    document.getElementById('repBtn').classList.toggle('active',       !isMgr);
+    document.getElementById('repSelector').classList.toggle('visible', !isMgr);
+    isMgr ? initManagerChart() : updateRepView();
+}
+
+function toggleRow(id) {
+    document.getElementById('row-' + id).classList.toggle('expanded');
+}
+
+function updateRepView() {
+    const id  = document.getElementById('repSelect').value;
+    const rep = REP_DATA[id];
+    const pct = Math.round((rep.arr / rep.quota) * 100);
+    const pc  = pctClass(pct);
+    const pgc = progressClass(pct);
+    const gap = pct >= 100
+        ? fmt(rep.arr - rep.quota) + ' above quota'
+        : fmt(rep.quota - rep.arr) + ' to quota';
+
+    document.getElementById('repHero').innerHTML = `
+        <div class="rep-hero-left">
+            <div class="hero-avatar ${rep.avClass}">${rep.initials}</div>
+            <div>
+                <div class="hero-name">${rep.name}</div>
+                <div class="hero-meta">
+                    <span class="hero-role">Account Executive</span>
+                    <span class="badge ${rep.badgeClass}">${rep.statusLabel}</span>
+                </div>
+            </div>
+        </div>
+        <div class="quota-block">
+            <div class="quota-lbl">Quota Attainment — Q2 2025</div>
+            <div class="quota-nums">
+                <span class="quota-big ${pc}">${pct}%</span>
+                &nbsp;·&nbsp; ${fmt(rep.arr)} of ${fmt(rep.quota)}
+            </div>
+            <div class="progress-track quota-bar">
+                <div class="progress-fill ${pgc}" style="width:${Math.min(pct, 100)}%"></div>
+            </div>
+            <div class="quota-hint">${gap}</div>
+        </div>
+    `;
+
+    document.getElementById('repKpiRow').innerHTML = `
+        <div class="kpi-card">
+            <div class="kpi-label">ARR Closed (QTD)</div>
+            <div class="kpi-value">${fmt(rep.arr)}</div>
+            <div class="kpi-sub">Quota: <strong>${fmt(rep.quota)}</strong></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Close Rate</div>
+            <div class="kpi-value">${rep.closeRate}<span class="unit">%</span></div>
+            <div class="kpi-sub">Team avg: <strong>22%</strong></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Avg Deal Size</div>
+            <div class="kpi-value">${fmt(rep.avgDeal)}</div>
+            <div class="kpi-sub">Team avg: <strong>$34K</strong></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Open Pipeline</div>
+            <div class="kpi-value">${fmt(rep.pipeline)}</div>
+            <div class="kpi-sub">Avg sales cycle: <strong>${rep.salesCycle}d</strong></div>
+        </div>
+    `;
+
+    document.getElementById('repActCards').innerHTML = `
+        <div class="act-card">
+            <div class="act-icon">📞</div>
+            <div class="act-val">${rep.calls}</div>
+            <div class="act-lbl">Calls This Week</div>
+        </div>
+        <div class="act-card">
+            <div class="act-icon">✉️</div>
+            <div class="act-val">${rep.emails}</div>
+            <div class="act-lbl">Emails Sent</div>
+        </div>
+        <div class="act-card">
+            <div class="act-icon">🗓️</div>
+            <div class="act-val">${rep.meetings}</div>
+            <div class="act-lbl">Meetings Last Week</div>
+        </div>
+        <div class="act-card">
+            <div class="act-icon">📈</div>
+            <div class="act-val">${rep.callsPerOpp}</div>
+            <div class="act-lbl">Calls per Opp</div>
+        </div>
+        <div class="act-card">
+            <div class="act-icon">📨</div>
+            <div class="act-val">${rep.emailsPerOpp}</div>
+            <div class="act-lbl">Emails per Opp</div>
+        </div>
+    `;
+
+    const rows = rep.deals.map(d => `
+        <tr>
+            <td style="font-weight:600">${d.co}</td>
+            <td style="text-align:right;font-weight:600;color:var(--accent)">${fmt(d.arr)}</td>
+            <td><span class="stage-pill ${d.cls}">${d.stage}</span></td>
+            <td style="text-align:right;color:var(--text-sec)">${d.days}d</td>
+        </tr>
+    `).join('');
+
+    document.getElementById('repDealsCard').innerHTML = `
+        <div class="card-title">Open Opportunities</div>
+        <table class="deals-table">
+            <thead><tr>
+                <th>Company</th>
+                <th style="text-align:right">ARR</th>
+                <th>Stage</th>
+                <th style="text-align:right">Days Open</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+        </table>
+    `;
+
+    initRepChart(rep.pipelineStages);
+}
+
+function makeChartOptions() {
+    return {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => '  ' + fmt(ctx.raw) } }
+        },
+        scales: {
+            x: {
+                grid:   { color: '#F0EDE6' },
+                border: { display: false },
+                ticks:  { color: '#8B7355', font: { size: 11, family: 'Inter' }, callback: v => '$' + (v / 1000) + 'K' }
+            },
+            y: {
+                grid:   { display: false },
+                border: { display: false },
+                ticks:  { color: '#2C2419', font: { size: 12, family: 'Inter', weight: '500' } }
+            }
+        }
+    };
+}
+
+function initManagerChart() {
+    const ctx = document.getElementById('managerPipelineChart');
+    if (!ctx) return;
+    if (managerChart) managerChart.destroy();
+    managerChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: STAGES,
+            datasets: [{ data: [420000, 680000, 890000, 540000, 310000], backgroundColor: STAGE_COLORS, borderRadius: 4, borderSkipped: false }]
+        },
+        options: makeChartOptions()
+    });
+}
+
+function initRepChart(data) {
+    const ctx = document.getElementById('repPipelineChart');
+    if (!ctx) return;
+    if (repChart) repChart.destroy();
+    repChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: STAGES,
+            datasets: [{ data: data, backgroundColor: STAGE_COLORS, borderRadius: 4, borderSkipped: false }]
+        },
+        options: makeChartOptions()
+    });
+}
+
+window.addEventListener('DOMContentLoaded', initManagerChart);
+</script>
+</body>
+</html>
