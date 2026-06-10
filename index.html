@@ -495,6 +495,67 @@
         }
         .deals-table tr:last-child td { border-bottom: none; }
 
+        /* ── COACHING ───────────────────────────── */
+        .coaching-chip {
+            font-size: 9px; font-weight: 700;
+            padding: 2px 6px; border-radius: 3px;
+            background: var(--surface); color: var(--text-sec);
+            border: 1px solid var(--border); letter-spacing: 0.2px;
+        }
+        .listen-link {
+            display: inline-block; margin-top: 12px;
+            font-size: 11px; font-weight: 600;
+            color: var(--accent); text-decoration: none;
+        }
+        .listen-link:hover { text-decoration: underline; }
+        .coaching-meta { font-size: 10px; color: var(--text-sec); font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+        .coaching-section {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 24px; margin-top: 24px;
+        }
+        .coaching-score-row {
+            display: flex; align-items: center; gap: 16px;
+            margin-bottom: 20px; padding-bottom: 20px;
+            border-bottom: 1px solid var(--surface);
+        }
+        .coaching-score-big { font-size: 36px; font-weight: 700; color: var(--text); line-height: 1; }
+        .coaching-score-label { font-size: 11px; color: var(--text-sec); margin-top: 4px; }
+        .trend-badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 4px; }
+        .trend-up   { background: var(--success-bg); color: var(--success); }
+        .trend-down { background: var(--danger-bg);  color: var(--danger); }
+        .trend-flat { background: var(--surface); color: var(--text-sec); border: 1px solid var(--border); }
+
+        .coaching-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 20px; }
+        .coaching-col-title {
+            font-size: 10px; font-weight: 700; color: var(--text-sec);
+            text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 12px;
+        }
+        .coaching-theme-item { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; font-size: 13px; color: var(--text); }
+        .theme-dot-good { width: 6px; height: 6px; border-radius: 50%; background: var(--success); margin-top: 6px; flex-shrink: 0; }
+        .theme-dot-work { width: 6px; height: 6px; border-radius: 50%; background: var(--warning); margin-top: 6px; flex-shrink: 0; }
+
+        .calls-dropdown-btn {
+            width: 100%; text-align: left;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); padding: 10px 14px;
+            font-size: 13px; font-weight: 500; color: var(--text);
+            cursor: pointer; display: flex; justify-content: space-between;
+            align-items: center; font-family: inherit;
+        }
+        .calls-dropdown-btn:hover { background: var(--border); }
+        .calls-dropdown-content { display: none; border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius-sm) var(--radius-sm); overflow: hidden; }
+        .calls-dropdown-content.open { display: block; }
+        .call-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--surface); }
+        .call-item:last-child { border-bottom: none; }
+        .call-item-left { display: flex; flex-direction: column; gap: 2px; }
+        .call-item-title { font-size: 13px; font-weight: 500; color: var(--text); }
+        .call-item-date  { font-size: 11px; color: var(--text-sec); }
+        .call-item-right { display: flex; align-items: center; gap: 12px; }
+        .call-score { font-size: 14px; font-weight: 700; color: var(--text); }
+        .call-listen-link { font-size: 11px; font-weight: 600; color: var(--accent); text-decoration: none; }
+        .call-listen-link:hover { text-decoration: underline; }
+
         /* ── RESPONSIVE ─────────────────────────── */
         @media (max-width: 960px) {
             main { padding: 20px 16px; }
@@ -798,7 +859,10 @@
                     <div class="avatar av-jordan">JT</div>
                     <div>
                         <div class="rep-name">Jordan Taylor</div>
-                        <span class="badge badge-declining">Declining</span>
+                        <div style="display:flex;align-items:center;gap:6px;margin-top:2px;flex-wrap:wrap">
+                            <span class="badge badge-declining">Declining</span>
+                            <span class="coaching-chip" id="jordan-coaching-score" style="display:none"></span>
+                        </div>
                     </div>
                 </div>
                 <div class="cell-r"><div class="cv">$324K</div><div class="cv-sub">ARR closed</div></div>
@@ -841,15 +905,20 @@
                         </table>
                     </div>
                     <div>
-                        <div class="expand-title">Coaching Notes</div>
-                        <div class="feedback-list">
-                            <div class="feedback-item">
-                                <div class="feedback-dot"></div>
-                                <div class="feedback-text">Deals are stalling between demo and proposal. Need to establish urgency and a confirmed next step before ending every demo call.</div>
-                            </div>
-                            <div class="feedback-item">
-                                <div class="feedback-dot"></div>
-                                <div class="feedback-text">Discovery questions are staying surface-level — not uncovering the full decision process or internal stakeholders. Needs to dig deeper before the demo.</div>
+                        <div class="expand-title" style="display:flex;justify-content:space-between;align-items:center">
+                            <span>Coaching Notes</span>
+                            <span id="jordan-coaching-meta" class="coaching-meta"></span>
+                        </div>
+                        <div id="jordan-coaching-panel">
+                            <div class="feedback-list">
+                                <div class="feedback-item">
+                                    <div class="feedback-dot"></div>
+                                    <div class="feedback-text">Deals are stalling between demo and proposal. Need to establish urgency and a confirmed next step before ending every demo call.</div>
+                                </div>
+                                <div class="feedback-item">
+                                    <div class="feedback-dot"></div>
+                                    <div class="feedback-text">Discovery questions are staying surface-level. Not uncovering the full decision process or internal stakeholders. Needs to dig deeper before the demo.</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -944,6 +1013,7 @@
         </div>
         <div id="repDealsCard" class="deals-card"></div>
     </div>
+    <div id="repCoachingSection" class="coaching-section" style="display:none"></div>
 </div><!-- /rep-view -->
 
 </main>
@@ -1144,6 +1214,7 @@ function updateRepView() {
     `;
 
     initRepChart(rep.pipelineStages);
+    renderRepCoaching(id);
 }
 
 function makeChartOptions() {
@@ -1198,7 +1269,103 @@ function initRepChart(data) {
     });
 }
 
-window.addEventListener('DOMContentLoaded', initManagerChart);
+/* ── COACHING ─────────────────────────────── */
+let coachingData = null;
+
+async function loadCoachingData() {
+    try {
+        const res = await fetch('./data/coaching.json');
+        if (!res.ok) throw new Error('no data');
+        coachingData = await res.json();
+        applyManagerCoaching();
+    } catch (e) {
+        // No coaching data yet — silent fail, static notes remain
+    }
+}
+
+function applyManagerCoaching() {
+    if (!coachingData || !coachingData.jordan) return;
+    const d = coachingData.jordan;
+
+    const chip = document.getElementById('jordan-coaching-score');
+    if (chip) { chip.textContent = 'Coach: ' + d.avg_score + '/5'; chip.style.display = 'inline-block'; }
+
+    const meta = document.getElementById('jordan-coaching-meta');
+    if (meta) meta.textContent = d.avg_score + '/5 avg · ' + d.calls_analyzed + ' call' + (d.calls_analyzed !== 1 ? 's' : '') + ' analyzed';
+
+    const panel = document.getElementById('jordan-coaching-panel');
+    if (!panel) return;
+
+    const bullets = d.manager_bullets.map(b =>
+        '<div class="feedback-item"><div class="feedback-dot"></div><div class="feedback-text">' + b + '</div></div>'
+    ).join('');
+
+    let flagLink = '';
+    if (d.flag_call && d.flag_call.score <= 3) {
+        flagLink = '<a href="' + d.flag_call.fireflies_url + '" target="_blank" class="listen-link">Listen: ' + d.flag_call.call_title + ' &rarr;</a>';
+    }
+
+    panel.innerHTML = '<div class="feedback-list">' + bullets + '</div>' + flagLink;
+}
+
+function renderRepCoaching(repId) {
+    const section = document.getElementById('repCoachingSection');
+    if (!section) return;
+    if (!coachingData || !coachingData[repId]) { section.style.display = 'none'; return; }
+
+    const d = coachingData[repId];
+    section.style.display = 'block';
+
+    const trendClass = {up:'trend-up', down:'trend-down', flat:'trend-flat'}[d.trend_direction] || 'trend-flat';
+    const trendLabel = {up:'&#9650; Improving', down:'&#9660; Declining', flat:'&rarr; Steady'}[d.trend_direction] || '&mdash; First call';
+
+    const noData = '<div style="font-size:12px;color:var(--text-sec)">More calls needed to identify patterns.</div>';
+
+    const strengthsHtml = (d.consistent_strengths || []).length
+        ? d.consistent_strengths.map(s => '<div class="coaching-theme-item"><div class="theme-dot-good"></div><span>' + s + '</span></div>').join('')
+        : noData;
+
+    const improvementsHtml = (d.consistent_improvements || []).length
+        ? d.consistent_improvements.map(s => '<div class="coaching-theme-item"><div class="theme-dot-work"></div><span>' + s + '</span></div>').join('')
+        : noData;
+
+    const recentCalls = (d.calls || []).slice(0, 3).map(c =>
+        '<div class="call-item">' +
+            '<div class="call-item-left"><div class="call-item-title">' + c.title + '</div><div class="call-item-date">' + c.date + '</div></div>' +
+            '<div class="call-item-right"><div class="call-score">' + c.overall_score + '/5</div>' +
+            '<a href="' + c.fireflies_url + '" target="_blank" class="call-listen-link">Listen &rarr;</a></div>' +
+        '</div>'
+    ).join('');
+
+    section.innerHTML =
+        '<div class="card-title">Call Coaching</div>' +
+        '<div class="coaching-score-row">' +
+            '<div>' +
+                '<div class="coaching-score-big">' + d.avg_score + '<span style="font-size:16px;font-weight:400;color:var(--text-sec)">/5</span></div>' +
+                '<div class="coaching-score-label">Avg score &middot; ' + d.calls_analyzed + ' call' + (d.calls_analyzed !== 1 ? 's' : '') + ' analyzed</div>' +
+            '</div>' +
+            '<span class="trend-badge ' + trendClass + '">' + trendLabel + '</span>' +
+        '</div>' +
+        '<div class="coaching-cols">' +
+            '<div><div class="coaching-col-title">Consistently Going Well</div>' + strengthsHtml + '</div>' +
+            '<div><div class="coaching-col-title">Consistently Needs Work</div>' + improvementsHtml + '</div>' +
+        '</div>' +
+        '<button class="calls-dropdown-btn" onclick="toggleCallsDropdown(this)">' +
+            '<span>Recent Calls (' + Math.min((d.calls || []).length, 3) + ')</span><span>&#9660;</span>' +
+        '</button>' +
+        '<div class="calls-dropdown-content">' + recentCalls + '</div>';
+}
+
+function toggleCallsDropdown(btn) {
+    const content = btn.nextElementSibling;
+    content.classList.toggle('open');
+    btn.querySelector('span:last-child').innerHTML = content.classList.contains('open') ? '&#9650;' : '&#9660;';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    initManagerChart();
+    loadCoachingData();
+});
 </script>
 </body>
 </html>

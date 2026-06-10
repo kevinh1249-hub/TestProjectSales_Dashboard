@@ -1,0 +1,57 @@
+{
+  "jordan": {
+    "avg_score": 2.6,
+    "calls_analyzed": 1,
+    "trend": "insufficient_data",
+    "trend_direction": "flat",
+    "consistent_strengths": ["Credibility Moments"],
+    "consistent_improvements": ["Next Step Clarity", "Problem Surfacing"],
+    "manager_bullets": [
+      "Next steps at end of calls are consistently missing. Conversations ending without commitments means deals risk going dark.",
+      "Strongest area: sharing specific examples of past work. This is landing well and building credibility.",
+      "Problem surfacing needs attention. Coming into conversations with vague asks rather than sharp, specific questions."
+    ],
+    "flag_call": {
+      "dimension": "next_step_clarity",
+      "score": 1,
+      "fireflies_url": "https://app.fireflies.ai/view/Kevin-and-Nathan-TenNapel::01KTC12KTD1X6JPR4ARXNDTFZ4",
+      "call_title": "Kevin and Nathan TenNapel"
+    },
+    "calls": [
+      {
+        "id": "01KTC12KTD1X6JPR4ARXNDTFZ4",
+        "title": "Kevin and Nathan TenNapel",
+        "date": "2026-06-04",
+        "fireflies_url": "https://app.fireflies.ai/view/Kevin-and-Nathan-TenNapel::01KTC12KTD1X6JPR4ARXNDTFZ4",
+        "overall_score": 2.6,
+        "dimensions": {
+          "listening_ratio": {
+            "score": 3,
+            "quote": "I've sort of built a system to help sales reps write super personalized emails at scale... I'm at the position where I'm reaching out to my network...",
+            "feedback": "Good listening once Nathan started talking, but opened with five sentences of context before asking the first question. Lead with a question next time to get into listening mode immediately."
+          },
+          "problem_surfacing": {
+            "score": 2,
+            "quote": "I just wanted to see any advice, tips, things like that.",
+            "feedback": "Came in with a vague ask. The best insight of the call came from Nathan, not from a sharp question. Come in with one specific decision to pressure-test next time."
+          },
+          "credibility_moments": {
+            "score": 4,
+            "quote": "I built a dashboard in 10 minutes with live artifacts. Just like, pulling in call data, pipeline, how each rep is doing.",
+            "feedback": "Strong. Concrete examples landed well and shifted the conversation to peer level. Do this earlier and it will set a better tone for the whole call."
+          },
+          "next_step_clarity": {
+            "score": 1,
+            "quote": "All right, thanks Nathan. I appreciate the time. This has been fantastic.",
+            "feedback": "Call ended with nothing concrete. Always close with a specific action, even a small one. It keeps the relationship open and shows you took the call seriously."
+          },
+          "curiosity_unlocked": {
+            "score": 3,
+            "quote": "How was that journey for you in terms of learning all that stuff? Were you technical before?",
+            "feedback": "Nathan leaned in naturally and asked questions back, but this happened on its own rather than being engineered. Use specific examples as invitations to pull the other person in."
+          }
+        }
+      }
+    ]
+  }
+}
