@@ -1,29 +1,62 @@
 {
   "jordan": {
-    "avg_score": 4.4,
-    "calls_analyzed": 1,
-    "trend": "insufficient_data",
+    "avg_score": 4.3,
+    "calls_analyzed": 2,
+    "trend": "steady",
     "trend_direction": "flat",
     "consistent_strengths": [
       "Listening Ratio",
       "Problem Surfacing",
       "Credibility Moments",
-      "Next Step Clarity",
       "Curiosity Unlocked"
     ],
     "consistent_improvements": [],
     "manager_bullets": [
-      "Kevin executed a high-quality advisory call focused on learning rather than selling\u2014he asked smart questions, listened more than he spoke, and left with actionable strategic insights (focus on buyer needs, consider data/dashboards vs. prospecting, test with target market).",
-      "Nathan became visibly invested in helping Kevin; he moved from answering questions to proactively sharing systems, code examples, and strategic frameworks, suggesting Kevin's curiosity and humility created trust and opened doors to deeper mentorship.",
-      "Key insight emerged late in the call: Kevin's prospecting tool might face market friction, but data/dashboarding solutions have immediate buyer appeal\u2014this could pivot his go-to-market strategy from product-first to customer-needs-first delivery, using AI scaffolding."
+      "Kevin ran an effective peer-to-peer discovery call by leading with questions, sharing credible examples from his own work, and positioning himself as seeking feedback rather than pitching. Jacob became a genuine thought partner rather than a prospect.",
+      "The conversation surfaced a real, specific pain point (manual daily briefing process for sales leaders) that could become a viable wedge for Kevin's business, and Jacob validated the problem from multiple angles.",
+      "Kevin missed an opportunity to establish a concrete next step with Jacob\u2014no explicit follow-up, no agreement for Jacob to intro him to others, no timeline for a follow-up call. This should have been closed more tightly given the strong rapport."
     ],
     "flag_call": {
       "dimension": "next_step_clarity",
-      "score": 4,
-      "fireflies_url": "https://app.fireflies.ai/view/Kevin-and-Nathan-TenNapel::01KTC12KTD1X6JPR4ARXNDTFZ4",
-      "call_title": "Kevin and Nathan TenNapel"
+      "score": 3,
+      "fireflies_url": "https://app.fireflies.ai/view/kevin-/-jake-1:1::01KTC8BGXPT2DZ7SE92AJK57J2",
+      "call_title": "kevin / jake 1:1"
     },
     "calls": [
+      {
+        "id": "01KTC8BGXPT2DZ7SE92AJK57J2",
+        "title": "kevin / jake 1:1",
+        "date": "2026-06-05",
+        "fireflies_url": "https://app.fireflies.ai/view/kevin-/-jake-1:1::01KTC8BGXPT2DZ7SE92AJK57J2",
+        "overall_score": 4.2,
+        "dimensions": {
+          "listening_ratio": {
+            "score": 5,
+            "quote": "What would you change? Update what's actually valuable, what's not valuable? Because I have my perspective from like a rep side of things.",
+            "feedback": "Kevin consistently asked Jacob open-ended questions and gave him space to share his perspective as a buyer. He explicitly positioned himself as seeking feedback rather than pitching, creating a true peer dialogue throughout the call."
+          },
+          "problem_surfacing": {
+            "score": 5,
+            "quote": "I have like a really manual process around this...every day a sales manager has calls coming up...having it send me a daily brief in my inbox that I can just read while I have my coffee in the morning, that is the biggest unlock I think for me.",
+            "feedback": "Jacob articulated a sharp, specific pain point about his daily workflow and the manual process of consolidating information. Kevin then dug deeper into whether email or dashboard delivery would be better, showing genuine curiosity about the exact shape of the problem."
+          },
+          "credibility_moments": {
+            "score": 5,
+            "quote": "So I gave this over to marketing and now marketing is doing blast outreach using this whole infrastructure to all the accounts that are not owned by AES...your entire account list of ICP targets is hit once a month.",
+            "feedback": "Kevin shared multiple concrete examples of systems he's built and deployed at his current company, including specific structures (top 50 accounts, 4,000 ICP accounts), templates, and results. This made him feel like a peer who had already solved the problem at scale."
+          },
+          "next_step_clarity": {
+            "score": 3,
+            "quote": "I'm chatting with center next week too. Ask him. I reached out to Rick, so we're gonna chat in a few weeks.",
+            "feedback": "Kevin mentioned upcoming conversations with other people but didn't establish a concrete next step with Jacob himself. While the call ended warmly with mutual enthusiasm, there was no explicit agreement about when they'd reconnect or what Jacob would do to help Kevin validate his ideas."
+          },
+          "curiosity_unlocked": {
+            "score": 5,
+            "quote": "I love what you built man. I think the services piece is super interesting. But if you have a templated software you can sell as well, I think it's a home run...you just gotta find your industry niche and then bro, like I think you just chase it down.",
+            "feedback": "Jacob became highly engaged and offered unsolicited advice, specific industry ideas (financial advisors, regulated industries), and concrete encouragement. He even shared that the conversation was inspiring him to think about his own business during his upcoming sabbatical, showing deep curiosity and investment in Kevin's success."
+          }
+        }
+      },
       {
         "id": "01KTC12KTD1X6JPR4ARXNDTFZ4",
         "title": "Kevin and Nathan TenNapel",
