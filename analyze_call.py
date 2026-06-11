@@ -100,7 +100,13 @@ def analyze(transcript_text, title):
         max_tokens=2000,
         messages=[{'role': 'user', 'content': prompt}]
     )
-    return json.loads(msg.content[0].text)
+    text = msg.content[0].text.strip()
+    if text.startswith('```'):
+        text = text.split('```', 2)[1]
+        if text.startswith('json'):
+            text = text[4:]
+        text = text.rsplit('```', 1)[0].strip()
+    return json.loads(text)
 
 
 def update_coaching_json(rep_id, call_id, title, date_str, ff_url, analysis):

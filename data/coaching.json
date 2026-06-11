@@ -1,19 +1,25 @@
 {
   "jordan": {
-    "avg_score": 2.6,
+    "avg_score": 4.4,
     "calls_analyzed": 1,
     "trend": "insufficient_data",
     "trend_direction": "flat",
-    "consistent_strengths": ["Credibility Moments"],
-    "consistent_improvements": ["Next Step Clarity", "Problem Surfacing"],
+    "consistent_strengths": [
+      "Listening Ratio",
+      "Problem Surfacing",
+      "Credibility Moments",
+      "Next Step Clarity",
+      "Curiosity Unlocked"
+    ],
+    "consistent_improvements": [],
     "manager_bullets": [
-      "Next steps at end of calls are consistently missing. Conversations ending without commitments means deals risk going dark.",
-      "Strongest area: sharing specific examples of past work. This is landing well and building credibility.",
-      "Problem surfacing needs attention. Coming into conversations with vague asks rather than sharp, specific questions."
+      "Kevin executed a high-quality advisory call focused on learning rather than selling\u2014he asked smart questions, listened more than he spoke, and left with actionable strategic insights (focus on buyer needs, consider data/dashboards vs. prospecting, test with target market).",
+      "Nathan became visibly invested in helping Kevin; he moved from answering questions to proactively sharing systems, code examples, and strategic frameworks, suggesting Kevin's curiosity and humility created trust and opened doors to deeper mentorship.",
+      "Key insight emerged late in the call: Kevin's prospecting tool might face market friction, but data/dashboarding solutions have immediate buyer appeal\u2014this could pivot his go-to-market strategy from product-first to customer-needs-first delivery, using AI scaffolding."
     ],
     "flag_call": {
       "dimension": "next_step_clarity",
-      "score": 1,
+      "score": 4,
       "fireflies_url": "https://app.fireflies.ai/view/Kevin-and-Nathan-TenNapel::01KTC12KTD1X6JPR4ARXNDTFZ4",
       "call_title": "Kevin and Nathan TenNapel"
     },
@@ -21,34 +27,34 @@
       {
         "id": "01KTC12KTD1X6JPR4ARXNDTFZ4",
         "title": "Kevin and Nathan TenNapel",
-        "date": "2026-06-04",
+        "date": "2026-06-05",
         "fireflies_url": "https://app.fireflies.ai/view/Kevin-and-Nathan-TenNapel::01KTC12KTD1X6JPR4ARXNDTFZ4",
-        "overall_score": 2.6,
+        "overall_score": 4.4,
         "dimensions": {
           "listening_ratio": {
-            "score": 3,
-            "quote": "I've sort of built a system to help sales reps write super personalized emails at scale... I'm at the position where I'm reaching out to my network...",
-            "feedback": "Good listening once Nathan started talking, but opened with five sentences of context before asking the first question. Lead with a question next time to get into listening mode immediately."
+            "score": 5,
+            "quote": "So I'd love to kind of get your perspective on, like, what you did to go from where I am to where you are, which is like, you've got leads, you're, you're running a successful business.",
+            "feedback": "Kevin opened with a genuine question and spent most of the call drawing Nathan out about his journey, systems, and approach. He listened actively, asked follow-up questions about specifics (APIs, Claude, terminal setup), and let Nathan fully explain his business model rather than redirecting to his own product."
           },
           "problem_surfacing": {
-            "score": 2,
-            "quote": "I just wanted to see any advice, tips, things like that.",
-            "feedback": "Came in with a vague ask. The best insight of the call came from Nathan, not from a sharp question. Come in with one specific decision to pressure-test next time."
+            "score": 4,
+            "quote": "I'm wondering if I'll run into friction there. Whereas, like, if I were to just be like, hey, I'll go to dental offices and like, just go in and like, you know, hey, I can run an automated, you know, people call after hours and things like that.",
+            "feedback": "Kevin surfaced real strategic uncertainties about target market selection and whether to focus on AI-first or traditional businesses. However, these remained somewhat exploratory rather than landing on a sharp, specific problem to solve. Nathan's advice about 'just talk to your customers' prevented deeper problem diagnosis."
           },
           "credibility_moments": {
-            "score": 4,
-            "quote": "I built a dashboard in 10 minutes with live artifacts. Just like, pulling in call data, pipeline, how each rep is doing.",
-            "feedback": "Strong. Concrete examples landed well and shifted the conversation to peer level. Do this earlier and it will set a better tone for the whole call."
+            "score": 5,
+            "quote": "That's what I've done with like co work. When I started like a month and a half ago, I was like, I have no idea how any of this stuff works, but it's just like, oh cool, you kind of figure it out as you go.",
+            "feedback": "Kevin shared concrete examples of his own building journey and mistakes, positioning himself as a peer learning in the same space. He also mentioned specific tools (cowork, Claude) and demonstrated hands-on experience, making him relatable and credible despite being earlier in his journey than Nathan."
           },
           "next_step_clarity": {
-            "score": 1,
-            "quote": "All right, thanks Nathan. I appreciate the time. This has been fantastic.",
-            "feedback": "Call ended with nothing concrete. Always close with a specific action, even a small one. It keeps the relationship open and shows you took the call seriously."
+            "score": 4,
+            "quote": "Okay. I feel like this helped me sort of like, cement a little bit of more of, like, what I'm gonna talk about on these calls, too. Like, hey, I've got this thing. But like you're the buyer, what do you want?",
+            "feedback": "Kevin articulated a concrete takeaway\u2014shifting his sales calls to focus on buyer needs rather than pushing his product\u2014and has scheduled follow-up calls with old VPs. However, there's no explicit commitment to specific actions or timeline beyond 'I'm gonna talk about this on these calls.'"
           },
           "curiosity_unlocked": {
-            "score": 3,
-            "quote": "How was that journey for you in terms of learning all that stuff? Were you technical before?",
-            "feedback": "Nathan leaned in naturally and asked questions back, but this happened on its own rather than being engineered. Use specific examples as invitations to pull the other person in."
+            "score": 5,
+            "quote": "Are you building like N8N sort of like connectors and stuff like that with them or like, how do you fulfill on those things? Let me, I want to show you one more thing.",
+            "feedback": "Nathan asked multiple technical follow-up questions (API vs MCP, token costs, terminal setup) and became increasingly engaged as Kevin showed genuine curiosity. Nathan voluntarily offered to demo his system and share additional insights, showing strong buy-in to helping Kevin succeed."
           }
         }
       }
